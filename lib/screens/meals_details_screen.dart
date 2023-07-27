@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../models/meal.dart';
 
 class MealDetailsScreen extends StatelessWidget {
+  const MealDetailsScreen(this.isFavorite, this.onToggleFavorite, {super.key});
+  final Function(Meal) onToggleFavorite;
+  final bool Function(Meal) isFavorite;
+
 //Criando a estrutura de um Titulo Fixo
   Widget _createSectionTitle(BuildContext context, String title) {
     return Container(
@@ -30,8 +34,6 @@ class MealDetailsScreen extends StatelessWidget {
       child: child,
     );
   }
-
-  const MealDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +92,16 @@ class MealDetailsScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.favorite),
-        onPressed: () => Navigator.of(context).pop(meal.title),
-        //Passando para tela pop (anterior) o argumento 'meal.title' = Nome
-      ),
+          child:
+              Icon(isFavorite(meal) ? Icons.favorite : Icons.favorite_border),
+          onPressed: () {
+            onToggleFavorite(meal);
+          }),
     );
   }
 }
+
+//Passando para tela pop (anterior) o argumento 'meal.title' = Nome
+//onPressed: () {
+//  Navigator.of(context).pop(meal);
+//}),

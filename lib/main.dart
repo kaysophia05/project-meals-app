@@ -26,20 +26,41 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   List<Meal> _avaiableMeals = dummyMeals;
+  List<Meal> _favoriteMeals = [];
 
+  // Instância da classe Settings é criada e armazenada na variável settings.
+  // A classe Settings contém os valores iniciais para as opções de filtros (como as configurações padrão).
+  Settings settings = Settings();
+
+  //metodo
   void _filterMeals(Settings settings) {
     setState(() {
+      //var
+      this.settings = settings;
+
       _avaiableMeals = dummyMeals.where((meal) {
         final filterGluten = settings.isGlutenFree && !meal.isGlutenFree;
         final filterLactose = settings.isLactoseFree && !meal.isLactoseFree;
         final filterVegan = settings.isVegan && !meal.isVegan;
         final filterVegetarian = settings.isVegetarian && !meal.isVegetarian;
-        return !filterVegetarian &&
+        return !filterGluten &&
             !filterLactose &&
             !filterVegan &&
             !filterVegetarian;
       }).toList();
     });
+  }
+
+  void _toggleFavorite(Meal meal) {
+    setState(() {
+      _favoriteMeals.contains(meal)
+          ? _favoriteMeals.remove(meal)
+          : _favoriteMeals.add(meal);
+    });
+  }
+
+  bool _isFavorite(Meal meal) {
+    return _favoriteMeals.contains(meal);
   }
 
   @override
@@ -60,20 +81,20 @@ class _MyAppState extends State<MyApp> {
             ),
       ),
       //Definindo as rotas
+      //colocando uma constante criada das rotas para n ser preciso ficar digitando o link
       routes: {
-        //TabsScreen = CategoriesScreen + FavoriteScreen
-        //colocando uma constante criada das rotas para n ser preciso ficar digitando o link
-        AppRoutes.HOME: (context) => TabsScreen(),
+        AppRoutes.HOME: (context) => TabsScreen(_favoriteMeals),
         AppRoutes.CATEGORIES_MEALS: (context) =>
             CategoriesMealsScreen(_avaiableMeals),
-        AppRoutes.MEAL_DETAILS: (context) => MealDetailsScreen(),
-        AppRoutes.SETTINGS: (context) => SettingsScreen(_filterMeals)
+        AppRoutes.MEAL_DETAILS: (context) =>
+            MealDetailsScreen(_isFavorite, _toggleFavorite),
+        AppRoutes.SETTINGS: (context) => SettingsScreen(settings, _filterMeals)
       },
 
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
           builder: (_) {
-            return CategoriesScreen();
+            return const CategoriesScreen();
           },
         );
       },

@@ -3,8 +3,10 @@ import '../components/main_drawer.dart';
 import '../models/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen(this.onSettingsChanged, {super.key});
+  const SettingsScreen(this.settings, this.onSettingsChanged, {Key? key})
+      : super(key: key);
 
+  final Settings settings;
   final Function(Settings) onSettingsChanged;
 
   @override
@@ -15,7 +17,15 @@ class SettingsScreen extends StatefulWidget {
 //depois que o user escolhe oq quer, o valor atualiza em (Settings)
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  var settings = Settings();
+  Settings? settings;
+
+//Aqui, estamos inicializando a variável de estado settings com o valor da propriedade settings do widget SettingsScreen (acessado através de widget.settings)
+  @override
+  void initState() {
+    super.initState();
+    settings = widget.settings;
+  }
+
   Widget _createSwite(
     String title,
     String subtitle,
@@ -29,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // estudar o fucionamento dessa função
       onChanged: (value) {
         onChanged(value);
-        widget.onSettingsChanged(settings);
+        widget.onSettingsChanged(settings!);
       },
     );
   }
@@ -40,11 +50,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: const Text('Configurações'),
       ),
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             alignment: Alignment.topLeft,
             child: Text('Configurações',
                 style: Theme.of(context).textTheme.titleLarge),
@@ -54,34 +64,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 //+=========================ADICIONANDO =====================
 
-                //settings.isGlutenFree: O valor atual da preferência "Sem Glúten" armazenado em settings.
+                //settings!.isGlutenFree: O valor atual da preferência "Sem Glúten" armazenado em settings!.
                 //Ele será usado para definir se o interruptor estará ligado ou desligado com base na preferência atual do usuário.
-                //(value) => setState(() => settings.isGlutenFree = value): Esta é a função para interagir com o interruptor
+                //(value) => setState(() => settings!.isGlutenFree = value): Esta é a função para interagir com o interruptor
                 // Quando o usuário alterar o valor do interruptor, o valor value (que representa o novo estado do interruptor) será passado para essa função.
                 _createSwite(
                   'Sem Glúten',
                   'Só exibir refeições sem glúten',
-                  settings.isGlutenFree,
-                  //aqui o valor de  settings. é atualuzado
-                  (value) => setState(() => settings.isGlutenFree = value),
+                  settings!.isGlutenFree,
+                  //aqui o valor de  settings!. é atualuzado
+                  (value) => setState(() => settings!.isGlutenFree = value),
                 ),
                 _createSwite(
                   'Sem Lactose',
                   'Só exibir refeições sem lactose',
-                  settings.isLactoseFree,
-                  (value) => setState(() => settings.isLactoseFree = value),
+                  settings!.isLactoseFree,
+                  (value) => setState(() => settings!.isLactoseFree = value),
                 ),
                 _createSwite(
                   'Vegana',
                   'Só exibir refeições veganas',
-                  settings.isVegan,
-                  (value) => setState(() => settings.isVegan = value),
+                  settings!.isVegan,
+                  (value) => setState(() => settings!.isVegan = value),
                 ),
                 _createSwite(
                   'Vegetariana',
                   'Só exibir refeições vegeterianas',
-                  settings.isVegetarian,
-                  (value) => setState(() => settings.isVegetarian = value),
+                  settings!.isVegetarian,
+                  (value) => setState(() => settings!.isVegetarian = value),
                 ),
               ],
             ),

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import './cadegories_screen.dart';
 import './favorite_screen.dart';
 import '../components/main_drawer.dart';
+import '../models/meal.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen(this.favoriteMeals, {super.key});
+  final List<Meal> favoriteMeals;
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -15,12 +17,22 @@ class TabsScreen extends StatefulWidget {
 class _TabsScreenState extends State<TabsScreen> {
   //LISTA DE TELAS
   //Lista de maps que contem em cada item uma string TITULO e o object/widget TELA
-  //Lista usada no title do appbar e no body
-  //É pela manipulação do index (_selectedScreenIndex) que uma determinado TITULO ou TELA irá ser exposto no app
-  final List<Map<String, Object>> _screens = [
-    {'title': 'Lista de Categorias', 'screen': const CategoriesScreen()},
-    {'title': 'Meus Favoritos', 'screen': const FavoriteScreen()},
-  ];
+  List<Map<String, Object>>? _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      {
+        'title': 'Lista de Categorias',
+        'screen': const CategoriesScreen(),
+      },
+      {
+        'title': 'Meus Favoritos',
+        'screen': FavoriteScreen(widget.favoriteMeals),
+      },
+    ];
+  }
 
   int _selectedScreenIndex = 0;
   _selectScreen(int index) {
@@ -33,14 +45,15 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_screens[_selectedScreenIndex]['title'] as String),
+        //index (_selectedScreenIndex) ('title'): Garante que o Title que está sendo perccorrido lista de 'screens' seja exposto
+        title: Text(_screens![_selectedScreenIndex]['title'] as String),
       ),
-      body: _screens[_selectedScreenIndex]['screen'] as Widget,
-      drawer: MainDrawer(),
+      //index (_selectedScreenIndex) ('screen'): Garante que a tela que está sendo perccorrida lista de 'screens' seja exposta
+      body: _screens![_selectedScreenIndex]['screen'] as Widget,
+      drawer: const MainDrawer(),
       bottomNavigationBar: BottomNavigationBar(
-        //OnTap passa o index como argumento, sendo 0 ou 1
-        //se categorias é clicado = index 0 é passado
-        //se favoritos é clicado = index 1 é passado
+        //OnTap passa o index como argumento para a função, sendo 0 ou 1
+        //categorias= index 0 é passado - favoritos = index 1 é passado
         onTap: _selectScreen,
         backgroundColor: Theme.of(context).colorScheme.primary,
         selectedItemColor: Theme.of(context).colorScheme.secondary,
